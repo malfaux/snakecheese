@@ -1,3 +1,8 @@
+quickie
+======
++ installation: easy-install django-contrib-requestprovider
++ pypi_home: http://pypi.python.org/pypi?name=django-contrib-requestprovider&version=1.0.1&:action=display
+
 description
 ===========
 
