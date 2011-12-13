@@ -1,13 +1,9 @@
 description
 ===========
 
-*gadjo.requestprovider* solves the problem of accessing django's HTTPRequest
-object whenever is needed, without explicitely passing it down the path of
+*gadjo.requestprovider* gives access to django's HTTPRequest
+object whenever is needed, without explicitly passing it down the path of
 code.
-
-one of the first solutions was to use python thread's locals() but, 
-`as described here`_, this is not so safe. other solutions are available but
-those only solve the problem locally.
 
 usage
 =====
@@ -55,20 +51,10 @@ receivers.
 
 TODO
 ====
-maybe submit it to django-users as a possible contrib. if you find this package
-useful, ping their mailing list.
-
-problem references
-==================
-
-`accessing request object in a form's clean() method`_
-
-`how to access the request object in admin.py`_
-
-`best way to access request in pre_save`_
+nothin
 
 
-.. _as described here: https://code.djangoproject.com/wiki/CookBookThreadlocalsAndUser
-.. _accessing request object in a form's clean() method: http://stackoverflow.com/questions/1057252/django-how-do-i-access-the-request-object-or-any-other-variable-in-a-forms-clea
-.. _how to access the request object in admin.py: http://stackoverflow.com/questions/727928/django-admin-how-to-access-the-request-object-in-admin-py-for-list-display-meth
-.. _best way to access request in pre_save: http://groups.google.com/group/django-users/browse_thread/thread/c859b1ddbdeb917c/e37dbd93db27de84?lnk=raot
+NOTE
+====
+this is not thread-safe. however, if you are running your django apps in a threaded environment
+I don't think you really know what you're doing.
