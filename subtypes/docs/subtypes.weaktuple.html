@@ -1,0 +1,136 @@
+<html>
+<head><title>subtypes.weaktuple</title></head>
+<body>
+<h1><a href="index.html">subtypes</a>.weaktuple</h1>
+<pre>
+    the weaktuple is a tuple with weakened immutability.
+    
+    the main difference betweek the two is that the weaktuple's immutability
+    is only concerned with the size and the underlying type of each component.
+    
+    in other words, tuple's immutability property can be viewed as a set of
+    three constraints C = (tupleSize, tupleComponentValue, tupleComponentType) (the
+    third may be somehow implicit).
+
+    The weaktuple's set of constraints has only two components:
+    C = (tupleSize,tupleComponentType), equivalent to "tuple
+    has a product type" if you like.
+
+    component type, equivalent to "tuple has a product type" if you like.
+    
+    the values of weaktuple's component can be updated as long as the component's 
+    type and tuple's size constraints are verified. 
+    
+    the weaktuple is not a 'hacked tuple' but a properly subclassed one. the
+    tuple component update constraint is solved by adding one layer of indirection
+    betweek the tuple implementation and the real object, a kind of proxy if you
+    like (see impl)
+    
+    applicability: storing the arguments to a function  as a tuple for a
+    later function call: while computing a set of conditions, the
+    arguments may be needing updates. It's easier, clearer and hopefully faster to do an
+    inplace tuple member update:
+    
+    >>> from subtypes.weaktuple import weaktuple
+    >>> def f(p1,p2,p3):
+    ...     print "called with: (%r,%r,%r)"%(p1,p2,p3)
+    ... 
+    >>> o=weaktuple([1,'abc',[(1,2),(1,3),(2,3)]])
+    >>> o
+    (1, 'abc', [(1, 2), (1, 3), (2, 3)])
+    >>> f(*o)
+    called with: (1,'abc',[(1, 2), (1, 3), (2, 3)])
+    >>> if issubclass(weaktuple,tuple): o[1]='cba'
+    >>> f(*o)
+    called with: (1,'cba',[(1, 2), (1, 3), (2, 3)])
+    >>> 
+    >>> ###########################################
+    ...
+    >>> t1=weaktuple(range(1,4))
+    #a weaktuple looks and feels like a normal tuple
+    >>> t1
+    (1, 2, 3)
+    #and the developer gets back what he sent, not the wrapper types
+    >>> map(type,t1)
+    [<type 'int'>, <type 'int'>, <type 'int'>]
+    >>> type(t1[1])
+    <type 'int'>
+    >>>
+    >>>#however, you can see the real member type by calling base's __getitem__
+    ...
+    >>> type(tuple.__getitem__(t1,1))
+    <class 'weaktuple.wrapped_int'>
+    >>># when returned outside the tuple, the member is the type the developer expects
+    ...# int type in this case
+    >>> a=reduce(lambda x,y:x+y, t1)
+    >>> a
+    47
+    >>> type(a)
+    <type 'int'>
+    >>> t1
+    (1, 2, 44)
+    #using a normal tuple like
+    >>> t2=([1,2,44])
+    >>> t2
+    (1, 2, 44)
+    #in relation with a weaktuple just works as expected:
+    >>> t1 == t2
+    True
+    >>> type(t1)
+    <class 'weaktuple.weaktuple'>
+    >>> type(t2)
+    <type 'tuple'>
+    >>> 
+    #the iterator returns the wrapped type, not the wrapper itself
+    >>> for x in t1: print type(x)
+    ... 
+    <type 'int'>
+    <type 'int'>
+    <type 'int'>
+    #although you can update the members, the tuple is still immutable
+    #don't forget the subscript operator returns the wrapped type, not the wrapper
+    >>> t2=weaktuple(range(1,10))
+    >>> t2
+    (1, 2, 3, 4, 5, 6, 7, 8, 9)
+    #see the wrapped object id before update
+    >>> id(t2[4])
+    9925336
+    #and the wrapper id
+    >>> id(tuple.__getitem__(t2,4))
+    11413008
+    #do the update
+    >>> t2[4]=666
+    >>> t2
+    (1, 2, 3, 4, 666, 6, 7, 8, 9)
+    #the wrapped object id changes
+    >>> id(t2[4])
+    10658496
+    #but the wrapper id remains the same
+    >>> id(tuple.__getitem__(t2,4))
+    11413008
+    #weaktuples accept any objects
+    >>> s1=weaktuple('abracadabra')
+    >>> s2=weaktuple('balangabala')
+    >>> s1.count('a')
+    5
+    >>> s2.index('l')
+    2
+    >>> s2 > s1
+    True
+    >>> m=weaktuple([
+    ... 1,'python has eggs',['blah',type('TheXClas',(object,),{'cm':'pepsi-cola',})()
+    ... ]])
+    >>> m2=weaktuple([
+    ... 1,'python has eggs',['blah',type('TheXClas',(object,),{'cm':'pepsi-cola',})()
+    ... ]])
+    (1, 'python has eggs', ['blah', <__main__.TheXClas object at 0x7f3743feae50>])
+    >>> m2
+    (1, 'python has eggs', ['blah', <__main__.TheXClas object at 0x7f3743feafd0>])
+    #different TheXClas object
+    >>> m==m2
+    False
+    
+    
+    
+</pre>
+</body></html>
