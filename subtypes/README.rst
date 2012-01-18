@@ -1,8 +1,6 @@
-
 Notes
 =====
     - "Alpha" development status is a very optimistic classifier.
-    - for flames use `deadloop's blog entry on python subtypes`_
 
 Changelog
 =========
